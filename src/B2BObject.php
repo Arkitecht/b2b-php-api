@@ -8,6 +8,9 @@ use Carbon\Carbon;
 abstract class B2BObject implements \JsonSerializable
 {
 
+    /**
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
         $data = (array)$this;
@@ -20,6 +23,11 @@ abstract class B2BObject implements \JsonSerializable
         return $data;
     }
 
+    /**
+     * @param $json
+     *
+     * @return null|object
+     */
     public static function fromJson($json)
     {
         if (is_string($json)) {
@@ -43,6 +51,14 @@ abstract class B2BObject implements \JsonSerializable
         return null;
     }
 
+    /**
+     * Get a date formatted in the B2B expected format
+     *
+     * @param string $date
+     * @param bool   $allDay
+     *
+     * @return string
+     */
     function formatDate($date, $allDay = false)
     {
         $formattedDate = Carbon::parse($date)->format('Y-m-d');
@@ -57,6 +73,9 @@ abstract class B2BObject implements \JsonSerializable
         return $formattedDate;
     }
 
+    /**
+     * @return string
+     */
     public function toJson()
     {
         return json_encode($this, JSON_PRETTY_PRINT);
