@@ -70,4 +70,39 @@ class Store extends B2BObject
      * @var ComplexTypes\DealerCode[]
      */
     public $dealerCodes; //[]
+
+    public function getSalesforceId()
+    {
+        return $this->getDealerCode(13);
+    }
+
+    public function getDealerCode($carrierId)
+    {
+        foreach ($this->dealerCodes as $dealerCode) {
+            if ($dealerCode->carrierDetails->carrierId == $carrierId) {
+                return $dealerCode->dealerCode;
+            }
+        }
+
+        return null;
+    }
+
+    public function hasDealerCode($search, $carrierId = null)
+    {
+        foreach ($this->dealerCodes as $dealerCode) {
+            if ($dealerCode->dealerCode == $search) {
+                if ($carrierId !== null) {
+                    if ($dealerCode->carrierDetails->carrierId == $carrierId) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
