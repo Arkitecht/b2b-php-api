@@ -371,7 +371,7 @@ class B2B
     /**
      * Get a list of products in stock for a single store
      *
-     * @param       $storeId
+     * @param int   $storeId
      * @param array $filters
      * @param int   $pageIndex
      * @param int   $pageSize
@@ -384,6 +384,19 @@ class B2B
         $parameters = $this->getPagingAndFilterParameters($filters, $pageIndex, $pageSize);
 
         return $this->makeRequest("/Product/api/stores/{$storeId}/products-in-stock", $parameters);
+    }
+
+    /**
+     * Create a purchase order
+     *
+     * @param PurchaseOrder|string $purchaseOrderData
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function addPurchaseOrder($purchaseOrderData)
+    {
+        return $this->makeRequest('/inventory/api/purchasing/order', $purchaseOrderData, 'post');
     }
 
 
