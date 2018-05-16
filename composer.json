@@ -1,0 +1,21 @@
+{
+    "name": "arkitecht/b2b",
+    "description": "B2B Soft REST API integration library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aaron J. Rubin",
+            "email": "aaron@arkitech.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "nesbot/carbon": "^1.27",
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Arkitecht\\B2B\\": "src/"
+        }
+    }
+}
