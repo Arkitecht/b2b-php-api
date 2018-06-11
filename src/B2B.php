@@ -15,7 +15,19 @@ class B2B
     private $auth;
     private $olrId;
     private $scopes = [];
-    private $endpoint = 'https://support-api.b2bsoft.com';
+    private $endpoint;
+    private $sso_endpoint;
+    private $environment = 'development';
+    private $endpoints = [
+        'development' => [
+            'api' => 'https://support-api.b2bsoft.com',
+            'sso' => 'https://support-sso.b2bsoft.com',
+        ],
+        'production'  => [
+            'api' => 'https://api.b2bsoft.com',
+            'sso' => 'https://sso.b2bsoft.com',
+        ],
+    ];
 
     /**
      * B2B constructor.
@@ -23,15 +35,64 @@ class B2B
      * @param string $auth
      * @param string $scopes
      * @param bool   $init
+     * @param string $environment
      */
-    public function __construct($auth, $scopes = '', $init = false)
+    public function __construct($auth, $scopes = '', $init = false, $environment = 'development')
     {
         $this->auth = $auth;
         $this->addScope($scopes);
+        $this->setEnvironment($environment);
+
         if ($init) {
             $this->getOauthToken();
             $this->getToken();
         }
+    }
+
+    /**
+     * Set the B2B environment to use
+     *
+     * @param $environment
+     *
+     * @return $this
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
+        $this->endpoint = $this->endpoints[ $environment ]['api'];
+        $this->sso_endpoint = $this->endpoints[ $environment ]['sso'];
+
+        return $this;
+    }
+
+    /**
+     * Get the current environment
+     *
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+    /**
+     * Get the current endpoint being used
+     *
+     * @return mixed
+     */
+    public function getEndpoint()
+    {
+        return $this->endpoint;
+    }
+
+    /**
+     * Get the current SSO endpoint being used
+     *
+     * @return mixed
+     */
+    public function getSsoEndpoint()
+    {
+        return $this->sso_endpoint;
     }
 
     /**
@@ -113,7 +174,7 @@ class B2B
     private function getOauthToken()
     {
         $client = new Client();
-        $response = $client->post('https://support-sso.b2bsoft.com/core/connect/token', [
+        $response = $client->post($this->sso_endpoint . '/core/connect/token', [
             'headers'     => [
                 'Accept'        => 'application/json',
                 'Authorization' => 'Basic ' . $this->auth,

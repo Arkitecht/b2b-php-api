@@ -133,4 +133,22 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
 
         print_r($response);
     }
+
+    /** @test */
+    function can_set_environment_to_production()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
+        $this->assertEquals('production', $b2b->getEnvironment());
+        $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
+        $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
+    }
+
+    /** @test */
+    function can_create_production_b2b_service_object()
+    {
+        $b2b = new B2B($this->config['prod_auth_token'], $this->config['scopes'], true, 'production');
+        $this->assertEquals('production', $b2b->getEnvironment());
+        $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
+        $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
+    }
 }
