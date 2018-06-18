@@ -222,13 +222,26 @@ class B2B
     /**
      * Get the list of coupons
      *
+     * @param string $sku
+     * @param null   $isActive
+     * @param int    $pageIndex
+     * @param int    $pageSize
+     *
      * @return string
      * @throws \Exception
      */
-    /*public function getCoupons()
+    public function getCoupons($sku = '', $isActive = null, $pageIndex = 1, $pageSize = 1000)
     {
-        return $this->makeRequest('/coupon/api/coupons');
-    }*/
+        $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
+        if ($sku) {
+            $parameters['Sku'] = $sku;
+        }
+        if ($isActive !== null) {
+            $parameters['IsActive'] = ($isActive) ? 'true' : 'false';
+        }
+
+        return $this->makeRequest('/coupon/api/coupons', $parameters);
+    }
 
     /**
      * Get a single Coupon
@@ -460,6 +473,80 @@ class B2B
         return $this->makeRequest('/inventory/api/purchasing/order', $purchaseOrderData, 'post');
     }
 
+    /**
+     * Get purchase orders
+     *
+     * @param string $referenceNum
+     * @param string $vendorCode
+     * @param int    $pageIndex
+     * @param int    $pageSize
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getPurchaseOrders($referenceNum = '', $vendorCode = '', $pageIndex = 1, $pageSize = 1000)
+    {
+        $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
+        if ($referenceNum) {
+            $parameters['ReferenceNum'] = $referenceNum;
+        }
+        if ($vendorCode) {
+            $parameters['VendorCode'] = $vendorCode;
+        }
+
+        return $this->makeRequest('/inventory/api/purchasing/order', $parameters);
+    }
+
+    /**
+     * Get a single purchase order
+     *
+     * @param string $purchaseOrderId
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getPurchaseOrder($purchaseOrderId)
+    {
+        return $this->makeRequest('/inventory/api/purchasing/order/' . $purchaseOrderId);
+    }
+
+    /**
+     * Get a purchase order receipts
+     *
+     *
+     * @param string $referenceNum
+     * @param string $vendorCode
+     * @param int    $pageIndex
+     * @param int    $pageSize
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getPurchaseOrderReceipts($referenceNum = '', $vendorCode = '', $pageIndex = 1, $pageSize = 1000)
+    {
+        $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
+        if ($referenceNum) {
+            $parameters['ReferenceNum'] = $referenceNum;
+        }
+        if ($vendorCode) {
+            $parameters['VendorCode'] = $vendorCode;
+        }
+
+        return $this->makeRequest('/inventory/api/receiving/order', $parameters);
+    }
+
+    /**
+     * Get a single purchase order
+     *
+     * @param string $purchaseOrderId
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getPurchaseOrderReceipt($purchaseOrderId)
+    {
+        return $this->makeRequest('/inventory/api/receiving/order/' . $purchaseOrderId);
+    }
 
     /**
      * Make the request to the B2B endpoint, adding the authorization token
