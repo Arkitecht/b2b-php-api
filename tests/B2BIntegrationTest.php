@@ -110,21 +110,41 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     function can_add_a_purchase_order()
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $b2b->setDebug();
+
+        /*$purchaseOrder = (new  PurchaseOrder())
+            ->setStoreId(4)
+            ->setDate(\Carbon\Carbon::now())
+            ->setReferenceNum('TESTREST123' . time())
+            ->setShippingCost(5.00)
+            ->setVendorCode('REF#ELEV#VIP');
+
+        $purchaseOrder->addProduct((new \Arkitecht\B2B\ComplexTypes\Product())
+            ->setCost(99.99)
+            ->setQuantity(5)
+            ->setName('BLGTributeDynasty')
+            ->setClass(\Arkitecht\B2B\ComplexTypes\ProductClass::CellPhone)
+            ->setManufacturer('LG')
+            ->setUpc('652810819046')
+            ->setDescription('LG Tribute Dynasty')
+            ->setSku('652810819046'));*/
 
         $purchaseOrder = (new  PurchaseOrder())
             ->setStoreId(4)
             ->setDate(\Carbon\Carbon::now())
-            ->setReferenceNum('TESTREST123')
+            ->setReferenceNum('TESTREST123' . time())
             ->setShippingCost(5.00)
             ->setVendorCode('REF#ONDIGO');
 
         $purchaseOrder->addProduct((new \Arkitecht\B2B\ComplexTypes\Product())
-            ->setCost(1.25)
-            ->setQuantity(4)
-            ->setName('HD360')
+            ->setCost(125.55)
+            ->setQuantity(5)
+            ->setName('SUPERONDIGOSKU')
             ->setClass(\Arkitecht\B2B\ComplexTypes\ProductClass::StandardAccessory)
-            ->setManufacturer('REF#ONDIGO')
-            ->setSku('819907010001'));
+            ->setManufacturer('Ondigo')
+            ->setUpc('SUPERONDIGOSKU')
+            ->setDescription('Brand New Ondigo SKU')
+            ->setSku('SUPERONDIGOSKU'));
 
         $response = $b2b->setOlrId($this->config['olrid'])->addPurchaseOrder($purchaseOrder);
         if (is_a($response, \GuzzleHttp\Exception\ClientException::class)) {
@@ -150,6 +170,14 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('production', $b2b->getEnvironment());
         $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
         $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
+    }
+
+    /** @test */
+    function can_get_stores()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $response = $b2b->setOlrId($this->config['olrid'])->getStores();
+        print_r($response);
     }
 
     /** @test */
@@ -191,4 +219,32 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $response = $b2b->setOlrId($this->config['olrid'])->getPurchaseOrderReceipt('6c6c9f03-9a39-4c5c-b6e9-082010444326');
         print_r($response);
     }
+
+    /** @test */
+    function can_get_products()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $response = $b2b->setOlrId($this->config['olrid'])->getProductsInStock();
+        print_r($response);
+    }
+
+    /** @test */
+    function can_get_store_products()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $response = $b2b->setOlrId($this->config['olrid'])->getStoreProductsInStock(4,['Upc'=>'819907010001']);
+        $items = json_decode($response);
+        print_r($items);
+    }
+
+    /** @test */
+    function can_get_products_with_filter()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku'=>'MOT1766ABB']);
+        $items = json_decode($response);
+        print_r($items);
+    }
+
+
 }

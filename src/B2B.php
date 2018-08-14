@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Middleware;
 
 class B2B
 {
@@ -18,6 +19,7 @@ class B2B
     private $endpoint;
     private $sso_endpoint;
     private $environment = 'development';
+    private $debug = false;
     private $endpoints = [
         'development' => [
             'api' => 'https://support-api.b2bsoft.com',
@@ -93,6 +95,11 @@ class B2B
     public function getSsoEndpoint()
     {
         return $this->sso_endpoint;
+    }
+
+    public function setDebug($debug = true)
+    {
+        $this->debug = $debug;
     }
 
     /**
@@ -230,7 +237,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getCoupons($sku = '', $isActive = null, $pageIndex = 1, $pageSize = 1000)
+    public function getCoupons($sku = '', $isActive = null, $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
         if ($sku) {
@@ -394,7 +401,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getProducts($filters = [], $pageIndex = 1, $pageSize = 1000)
+    public function getProducts($filters = [], $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters($filters, $pageIndex, $pageSize);
 
@@ -411,7 +418,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getProductsInStock($filters = [], $pageIndex = 1, $pageSize = 1000)
+    public function getProductsInStock($filters = [], $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters($filters, $pageIndex, $pageSize);
 
@@ -453,7 +460,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getStoreProductsInStock($storeId, $filters = [], $pageIndex = 1, $pageSize = 1000)
+    public function getStoreProductsInStock($storeId, $filters = [], $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters($filters, $pageIndex, $pageSize);
 
@@ -484,7 +491,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getPurchaseOrders($referenceNum = '', $vendorCode = '', $pageIndex = 1, $pageSize = 1000)
+    public function getPurchaseOrders($referenceNum = '', $vendorCode = '', $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
         if ($referenceNum) {
@@ -522,7 +529,7 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    public function getPurchaseOrderReceipts($referenceNum = '', $vendorCode = '', $pageIndex = 1, $pageSize = 1000)
+    public function getPurchaseOrderReceipts($referenceNum = '', $vendorCode = '', $pageIndex = 0, $pageSize = 1000)
     {
         $parameters = $this->getPagingAndFilterParameters([], $pageIndex, $pageSize);
         if ($referenceNum) {
@@ -586,6 +593,25 @@ class B2B
                 } elseif ($method == 'get') {
                     $request['query'] = $parameters;
                 }
+            }
+
+            if ($this->debug) {
+                $tapMiddleware = Middleware::tap(function ($realRequest) use ($fullEndpoint, $request) {
+                    echo "Environment:\n";
+                    echo $this->environment;
+                    echo "\n";
+
+                    echo "Request URL:\n";
+                    echo $fullEndpoint;
+                    echo "\n";
+
+                    echo "Request Body:\n";
+                    echo $realRequest->getBody();
+                    print_r($request);
+                    echo "\n";
+                });
+                $clientHandler = $client->getConfig('handler');
+                $request['handler'] = $tapMiddleware($clientHandler);
             }
 
             $response = $client->$method($fullEndpoint, $request);
@@ -673,7 +699,7 @@ class B2B
         ];
         if ($filters) {
             foreach ($filters as $filter => $value) {
-                $parameters["filter.{$filter}"] = $value;
+                $parameters[ $filter ] = $value;
             }
         }
 
