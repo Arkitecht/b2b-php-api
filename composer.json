@@ -9,7 +9,7 @@
     }
   ],
   "require": {
-    "php": ">=5.6.4",
+    "php": ">=5.6.4|^7",
     "nesbot/carbon": "^1.20",
     "guzzlehttp/guzzle": "^6.2",
     "netresearch/jsonmapper": "^1.4"
