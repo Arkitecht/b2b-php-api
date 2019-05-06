@@ -6,30 +6,31 @@ class SoapTest extends PHPUnit_Framework_TestCase
 {
 
     private $config;
+    private $b2bSoap;
 
     public function setUp()
     {
         if (!$this->config) {
             $this->config = require dirname(__FILE__) . '/config.php';
         }
+        $this->b2bSoap = new \Arkitecht\B2B\B2BSoap(
+            $this->config['soap']['service_code'],
+            $this->config['soap']['username'],
+            $this->config['soap']['password'],
+            $this->config['soap']['vendor_code']
+        );
     }
 
     /** @test */
     function can_get_vmi_report()
     {
         ini_set('memory_limit', '2G');
-        $logon = new \Arkitecht\B2B\SOAP\VMI\LogOnInfo(
-            $CompanyCode = $this->config['olrid'],
-            $ServiceCode = $this->config['soap']['service_code'],
-            $UserName = $this->config['soap']['username'],
-            $Password = $this->config['soap']['password'],
-            $VendorCode = $this->config['soap']['vendor_code']
-        );
+        $logon = $this->b2bSoap->getLogonObject($this->config['olrid']);
 
         $service = new VMIService();
         $report = new \Arkitecht\B2B\SOAP\VMI\GetVMIReport();
         $report->setLogon($logon);
-        $report->setDateFrom(\Carbon\Carbon::parse('2018-12-17')->startOfDay());
+        $report->setDateFrom(\Carbon\Carbon::parse('7 days ago')->startOfDay());
         $report->setDateEnd(\Carbon\Carbon::now());
         $report->setDealerCodes($this->config['soap']['dealer_codes']);
 

@@ -109,7 +109,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     /** @test */
     function can_add_a_purchase_order()
     {
-        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
         $b2b->setDebug();
 
         /*$purchaseOrder = (new  PurchaseOrder())
@@ -133,18 +133,30 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
             ->setStoreId(4)
             ->setDate(\Carbon\Carbon::now())
             ->setReferenceNum('TESTREST123' . time())
-            ->setShippingCost(5.00)
+            ->setShippingCost(0)
             ->setVendorCode('REF#ONDIGO');
 
         $purchaseOrder->addProduct((new \Arkitecht\B2B\ComplexTypes\Product())
-            ->setCost(125.55)
-            ->setQuantity(5)
-            ->setName('SUPERONDIGOSKU')
+            ->setCost(3.2)
+            ->setQuantity(2)
+            ->setName('AMPD 3-in-1 Dual Protection Case w/ Kickstand\Clip')
             ->setClass(\Arkitecht\B2B\ComplexTypes\ProductClass::StandardAccessory)
             ->setManufacturer('Ondigo')
-            ->setUpc('SUPERONDIGOSKU')
-            ->setDescription('Brand New Ondigo SKU')
-            ->setSku('SUPERONDIGOSKU'));
+            ->setUpc('21150170011')
+            ->setDescription('AMPD Black')
+            ->setCategoryId(1011)
+            ->setSku('AA-SCREWSLIM-STYLO3-BLK'));
+
+        $purchaseOrder->addProduct((new \Arkitecht\B2B\ComplexTypes\Product())
+            ->setCost(3.2)
+            ->setQuantity(3)
+            ->setName('AMPD 3-in-1 Dual Protection Case w/ Kickstand/Clip')
+            ->setClass(\Arkitecht\B2B\ComplexTypes\ProductClass::StandardAccessory)
+            ->setManufacturer('Ondigo')
+            ->setUpc('211150170028')
+            ->setDescription('AMPD Black')
+            ->setCategoryId(1011)
+            ->setSku('AA-SCREWSLIM-STYLO3-RED'));
 
         $response = $b2b->setOlrId($this->config['olrid'])->addPurchaseOrder($purchaseOrder);
         if (is_a($response, \GuzzleHttp\Exception\ClientException::class)) {
@@ -246,5 +258,35 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         print_r($items);
     }
 
+    /** @test */
+    function can_get_products_in_production()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
+        $this->assertEquals('production', $b2b->getEnvironment());
+        $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
+        $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
+
+        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku'=>'MOT1766ABB']);
+        $items = json_decode($response);
+        print_r($items);
+    }
+
+    /** @test */
+    function can_get_categories()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
+        $response = $b2b->setOlrId($this->config['olrid'])->getSystemCategories();
+        $items = json_decode($response);
+        print_r($items);
+    }
+
+    /** @test */
+    function can_get_departments_in_production()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
+        $response = $b2b->setOlrId($this->config['olrid'])->getSystemCategories();
+        $items = json_decode($response);
+        print_r($items);
+    }
 
 }
