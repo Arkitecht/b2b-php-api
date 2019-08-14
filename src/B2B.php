@@ -556,6 +556,30 @@ class B2B
     }
 
     /**
+     * Get the VMI report
+     *
+     * @param int|array         $location           Store Id or Ids
+     * @param string            $vendor             B2b Vendor Identifier
+     * @param string|array|null $periodOrParameters Date period or parameters array
+     * @param array             $parameters         Additional request parameters
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getVmiReport($location, $vendor, $periodOrParameters = null, $parameters = [])
+    {
+        if (is_array($periodOrParameters)) {
+            $parameters = $periodOrParameters;
+        } else {
+            $parameters['Period'] = $periodOrParameters;
+        }
+        $parameters['Location'] = $location;
+        $parameters['Vendor'] = $vendor;
+
+        return $this->makeRequest('/inventory/api/purchasing/reporting', $parameters);
+    }
+
+    /**
      * Make the request to the B2B endpoint, adding the authorization token
      *
      * @param string $endpoint
@@ -597,13 +621,10 @@ class B2B
 
             if ($this->debug) {
                 $tapMiddleware = Middleware::tap(function ($realRequest) use ($fullEndpoint, $request) {
-                    echo "Environment:\n";
-                    echo $this->environment;
-                    echo "\n";
+                    echo "Environment: {$this->environment}\n";
 
-                    echo "Request URL:\n";
-                    echo $fullEndpoint;
-                    echo "\n";
+
+                    echo "Request URL: {$fullEndpoint}\n";
 
                     echo "Request Body:\n";
                     echo $realRequest->getBody();
