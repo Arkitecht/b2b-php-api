@@ -580,6 +580,25 @@ class B2B
     }
 
     /**
+     * Get the VMI report
+     *
+     * @param string|date         $startDate           Start Date for data requests
+     * @param string|date            $endDate          End Date for data requests
+     * @param string|array|null $periodOrParameters Date period or parameters array
+     * @param array             $parameters         Additional request parameters
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getItemMovementReport($startDate, $endDate, $parameters = [])
+    {
+        $parameters['StartDate'] = $startDate;
+        $parameters['EndDate'] = $endDate;
+
+        return $this->makeRequest('/inventory/api/reporting/itemMovement', $parameters);
+    }
+
+    /**
      * Make the request to the B2B endpoint, adding the authorization token
      *
      * @param string $endpoint
@@ -595,7 +614,7 @@ class B2B
 
         $olrId = $this->olrId;
         if (!$olrId) {
-            throw new \Exception('Mo olrId specified. Must be set using setOlrId()');
+            throw new \Exception('No olrId specified. Must be set using setOlrId()');
         }
         $this->getCurrentToken();
         $client = new Client();
@@ -637,11 +656,13 @@ class B2B
 
             $response = $client->$method($fullEndpoint, $request);
         } catch (ClientException $exception) {
-            //dd($exception->getMessage(), $exception->getRequest()->getMethod(), $exception->getRequest()->getUri(), $exception->getRequest()->getBody()->getContents());
+            if ($this->debug) {
+                print_r([$exception->getMessage(), $exception->getRequest()->getMethod(), $exception->getRequest()->getUri(), $exception->getRequest()->getBody()->getContents()]);
+            }
 
-            return $exception;
+            return $exception->getRequest()->getBody()->getContents();
         } catch (ServerException $exception) {
-            return $exception;
+            return $exception->getRequest()->getBody()->getContents();
         }
 
         return $response->getBody()->getContents();
