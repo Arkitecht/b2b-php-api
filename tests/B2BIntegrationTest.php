@@ -163,7 +163,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
             $this->fail($response->getMessage());
         }
 
-        print_r($response);
+        // print_r($response);
     }
 
     /** @test */
@@ -178,7 +178,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     /** @test */
     function can_create_production_b2b_service_object()
     {
-        $b2b = new B2B($this->config['prod_auth_token'], $this->config['scopes'], true, 'production');
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], true, 'production');
         $this->assertEquals('production', $b2b->getEnvironment());
         $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
         $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
@@ -189,7 +189,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
         $response = $b2b->setOlrId($this->config['olrid'])->getStores();
-        print_r($response);
+        // print_r($response);
     }
 
     /** @test */
@@ -212,7 +212,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     function can_get_po()
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
-        $response = $b2b->setOlrId($this->config['olrid'])->getPurchaseOrder('89b4e4ef-d312-4b2e-a070-c5349996f7b0');
+        $response = $b2b->setOlrId($this->config['olrid'])->getPurchaseOrder('e6c4eb49-aa28-4925-8372-00c6ea159215');
         $this->assertObjectHasAttribute('documentId', json_decode($response));
     }
 
@@ -221,7 +221,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
         $response = $b2b->setOlrId($this->config['olrid'])->getPurchaseOrderReceipts(null, 'Ondigo');
-        print_r($response);
+        // print_r($response);
     }
 
     /** @test */
@@ -229,7 +229,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
         $response = $b2b->setOlrId($this->config['olrid'])->getPurchaseOrderReceipt('6c6c9f03-9a39-4c5c-b6e9-082010444326');
-        print_r($response);
+        // print_r($response);
     }
 
     /** @test */
@@ -237,7 +237,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
         $response = $b2b->setOlrId($this->config['olrid'])->getProductsInStock();
-        print_r($response);
+        //print_r($response);
     }
 
     /** @test */
@@ -246,7 +246,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
         $response = $b2b->setOlrId($this->config['olrid'])->getStoreProductsInStock(4,['Upc'=>'819907010001']);
         $items = json_decode($response);
-        print_r($items);
+        // print_r($items);
     }
 
     /** @test */
@@ -268,7 +268,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
 
         $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku'=>'MOT1766ABB']);
         $items = json_decode($response);
-        print_r($items);
+        // print_r($items);
     }
 
     /** @test */
@@ -277,7 +277,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
         $response = $b2b->setOlrId($this->config['olrid'])->getSystemCategories();
         $items = json_decode($response);
-        print_r($items);
+        // print_r($items);
     }
 
     /** @test */
@@ -286,7 +286,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false, 'production');
         $response = $b2b->setOlrId($this->config['olrid'])->getSystemCategories();
         $items = json_decode($response);
-        print_r($items);
+        // print_r($items);
     }
 
 }

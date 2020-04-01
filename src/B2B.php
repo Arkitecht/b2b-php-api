@@ -655,6 +655,7 @@ class B2B
             }
 
             $response = $client->$method($fullEndpoint, $request);
+            // print_r($response);
         } catch (ClientException $exception) {
             if ($this->debug) {
                 print_r([$exception->getMessage(), $exception->getRequest()->getMethod(), $exception->getRequest()->getUri(), $exception->getRequest()->getBody()->getContents()]);
