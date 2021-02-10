@@ -97,6 +97,9 @@ class B2B
         return $this->sso_endpoint;
     }
 
+    /**
+     * @param bool $debug
+     */
     public function setDebug($debug = true)
     {
         $this->debug = $debug;
@@ -582,8 +585,8 @@ class B2B
     /**
      * Get the VMI report
      *
-     * @param string|date         $startDate           Start Date for data requests
-     * @param string|date            $endDate          End Date for data requests
+     * @param string|date       $startDate          Start Date for data requests
+     * @param string|date       $endDate            End Date for data requests
      * @param string|array|null $periodOrParameters Date period or parameters array
      * @param array             $parameters         Additional request parameters
      *
@@ -597,6 +600,63 @@ class B2B
 
         return $this->makeRequest('/inventory/api/reporting/itemMovement', $parameters);
     }
+
+    /**
+     * Get a list of KPIs
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getKpiList()
+    {
+        return $this->makeRequest('/reporting/api/kpislist');
+    }
+
+    /**
+     * @param array  $storeIds B2b Store Ids
+     * @param string $start    Start Date for request
+     * @param string $end      End Date for request
+     *
+     * @return string
+     */
+    public function getDkDashboard($storeIds = [], $start = null, $end = null)
+    {
+        if ($storeIds) {
+            if (is_array($storeIds)) {
+                $storeIds = implode(',', $storeIds);
+            }
+            $parameters[] = [
+                'Id'    => '147',
+                'Value' => $storeIds,
+            ];
+        }
+
+        if ($start && $end) {
+            $parameters[] = [
+                'Id'          => '20',
+                'PeriodRange' => 'Custom',
+                'StartDate'   => Carbon::parse($start)->format('m/d/Y'),
+                'EndDate'     => Carbon::parse($end)->format('m/d/Y'),
+            ];
+        }
+
+        return $this->makePostRequest('/reporting/api/widget/dkreport', $parameters);
+    }
+
+    /**
+     * Make a post request
+     *
+     * @param string $endpoint
+     * @param array  $parameters
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function makePostRequest($endpoint, $parameters = [])
+    {
+        return $this->makeRequest($endpoint, $parameters, 'post');
+    }
+
 
     /**
      * Make the request to the B2B endpoint, adding the authorization token

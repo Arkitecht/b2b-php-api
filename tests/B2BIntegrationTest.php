@@ -1,25 +1,12 @@
 <?php
 
+namespace Tests;
+
 use Arkitecht\B2B\B2B;
 use Arkitecht\B2B\PurchaseOrder;
 
-class B2BIntegrationTest extends PHPUnit_Framework_TestCase
+class B2BIntegrationTest extends BaseB2bTest
 {
-
-    private $config;
-
-    public function setUp()
-    {
-        if (!$this->config) {
-            $this->config = require dirname(__FILE__) . '/config.php';
-        }
-    }
-
-    private function getConfig()
-    {
-        $this->config = require_once dirname(__FILE__) . '/config.php';
-    }
-
     /** @test */
     function can_create_b2b_service_object()
     {
@@ -244,7 +231,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     function can_get_store_products()
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
-        $response = $b2b->setOlrId($this->config['olrid'])->getStoreProductsInStock(4,['Upc'=>'819907010001']);
+        $response = $b2b->setOlrId($this->config['olrid'])->getStoreProductsInStock(4, ['Upc' => '819907010001']);
         $items = json_decode($response);
         // print_r($items);
     }
@@ -253,7 +240,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
     function can_get_products_with_filter()
     {
         $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
-        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku'=>'MOT1766ABB']);
+        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku' => 'MOT1766ABB']);
         $items = json_decode($response);
         print_r($items);
     }
@@ -266,7 +253,7 @@ class B2BIntegrationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('https://api.b2bsoft.com', $b2b->getEndpoint());
         $this->assertEquals('https://sso.b2bsoft.com', $b2b->getSsoEndpoint());
 
-        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku'=>'MOT1766ABB']);
+        $response = $b2b->setOlrId($this->config['olrid'])->getProducts(['Sku' => 'MOT1766ABB']);
         $items = json_decode($response);
         // print_r($items);
     }
