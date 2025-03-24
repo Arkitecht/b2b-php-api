@@ -22,11 +22,11 @@ class B2B
     private $debug = false;
     private $endpoints = [
         'development' => [
-            'api' => 'https://support-api.b2bsoft.com',
+            'api' => 'https://support-apigateway.b2bsoft.com',
             'sso' => 'https://support-sso.b2bsoft.com',
         ],
         'production'  => [
-            'api' => 'https://api.b2bsoft.com',
+            'api' => 'https://apigateway.b2bsoft.com',
             'sso' => 'https://sso.b2bsoft.com',
         ],
     ];

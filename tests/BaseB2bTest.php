@@ -2,11 +2,13 @@
 
 namespace Tests;
 
-abstract class BaseB2bTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class BaseB2bTest extends TestCase
 {
     protected $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!$this->config) {
             $this->config = require dirname(__FILE__) . '/config.php';
