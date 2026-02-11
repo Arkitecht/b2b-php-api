@@ -2,13 +2,13 @@
 
 use Arkitecht\B2B\SOAP\VMI\VMIService;
 
-class SoapTest extends PHPUnit_Framework_TestCase
+class SoapTest extends \PHPUnit\Framework\TestCase
 {
 
     private $config;
     private $b2bSoap;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!$this->config) {
             $this->config = require dirname(__FILE__) . '/config.php';

@@ -4,12 +4,12 @@ use Arkitecht\B2B\B2B;
 use Arkitecht\B2B\PurchaseOrder;
 use Arkitecht\B2B\SOAP\VMI\VMIService;
 
-class VmiReportTest extends PHPUnit_Framework_TestCase
+class VmiReportTest extends \PHPUnit\Framework\TestCase
 {
 
     private $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         if (!$this->config) {
             $this->config = require dirname(__FILE__) . '/config.php';
