@@ -18,16 +18,19 @@ class B2B
     private $scopes = [];
     private $endpoint;
     private $sso_endpoint;
+    private $transactions_endpoint;
     private $environment = 'development';
     private $debug = false;
     private $endpoints = [
         'development' => [
-            'api' => 'https://support-apigateway.b2bsoft.com',
-            'sso' => 'https://support-sso.b2bsoft.com',
+            'api'          => 'https://support-apigateway.b2bsoft.com',
+            'sso'          => 'https://support-sso.b2bsoft.com',
+            'transactions' => 'https://analytics-partner-facade-api-support.b2bsoft.com',
         ],
         'production'  => [
-            'api' => 'https://apigateway.b2bsoft.com',
-            'sso' => 'https://sso.b2bsoft.com',
+            'api'          => 'https://apigateway.b2bsoft.com',
+            'sso'          => 'https://sso.b2bsoft.com',
+            'transactions' => 'https://analytics-partner-facade-api-support.b2bsoft.com',
         ],
     ];
 
@@ -63,6 +66,7 @@ class B2B
         $this->environment = $environment;
         $this->endpoint = $this->endpoints[ $environment ]['api'];
         $this->sso_endpoint = $this->endpoints[ $environment ]['sso'];
+        $this->transactions_endpoint = $this->endpoints[ $environment ]['transactions'];
 
         return $this;
     }
@@ -103,6 +107,8 @@ class B2B
     public function setDebug($debug = true)
     {
         $this->debug = $debug;
+
+        return $this;
     }
 
     /**
@@ -668,9 +674,9 @@ class B2B
      * @return string
      * @throws \Exception
      */
-    private function makeRequest($endpoint, $parameters = [], $method = 'get')
+    private function makeRequest($endpoint, $parameters = [], $method = 'get', $isFullEndpoint = false)
     {
-        $fullEndpoint = $this->endpoint . $endpoint;
+        $fullEndpoint = $isFullEndpoint ? $endpoint : $this->endpoint . $endpoint;
 
         $olrId = $this->olrId;
         if (!$olrId) {
@@ -809,4 +815,16 @@ class B2B
         return $parameters;
     }
 
+
+    public function getTransactions($start, $end, $filters = [], $pageIndex = 0, $pageSize = 1000)
+    {
+        $dateFilters = [
+            'dateFrom' => Carbon::parse($start)->utc()->format('Y-m-d\TH:i:s').'Z',
+            'dateTo'   => Carbon::parse($end)->utc()->format('Y-m-d\TH:i:s').'Z',
+        ];
+        $filters = array_merge($filters, $dateFilters);
+        $parameters = $this->getPagingAndFilterParameters($filters, $pageIndex, $pageSize);
+
+        return $this->makeRequest($this->transactions_endpoint . '/api/transactions', $parameters, isFullEndpoint: true);
+    }
 }

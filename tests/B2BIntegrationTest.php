@@ -329,4 +329,24 @@ class B2BIntegrationTest extends BaseB2bTest
         print_r($data);
     }
 
+    /** @test */
+    #[Test]
+    function can_get_transactions()
+    {
+        $b2b = new B2B($this->config['auth_token'], $this->config['scopes'], false);
+        $response = $b2b
+            ->setDebug()
+            ->setOlrId(9900902)
+            ->getTransactions(
+                Carbon::now()->subHours(10),
+                Carbon::now()->subHours(9),
+                [
+                    'customerPhoneNumber' => '2544213380',
+                ]
+            );
+
+        $this->assertNotEmpty($response);
+        print $response;
+    }
+
 }
