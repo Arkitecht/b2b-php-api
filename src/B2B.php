@@ -30,7 +30,7 @@ class B2B
         'production'  => [
             'api'          => 'https://apigateway.b2bsoft.com',
             'sso'          => 'https://sso.b2bsoft.com',
-            'transactions' => 'https://analytics-partner-facade-api-support.b2bsoft.com',
+            'transactions' => 'https://analytics-partner-facade-api.b2bsoft.com',
         ],
     ];
 
